@@ -1,26 +1,49 @@
 // Copyright (C) 2024 Lukas Rotermund
 // See end of file for extended copyright information.
 
-package main
+package logger
 
-import (
-	"log"
-	"net/http"
+import "go.uber.org/zap"
 
-	"github.com/labstack/echo/v4"
-)
+var zapLogger *zap.Logger
 
-func main() {
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		log.Printf("Hallo Brendon")
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-	e.POST("/create-spaceship", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+func New() error {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		return err
+	}
 
-	e.Logger.Fatal(e.Start(":8080"))
+	zapLogger = logger
+
+	return nil
+}
+
+func Debug(msg string, fields ...zap.Field) {
+	zapLogger.Debug(msg, fields...)
+}
+
+func Info(msg string, fields ...zap.Field) {
+	zapLogger.Info(msg, fields...)
+}
+
+func Warn(msg string, fields ...zap.Field) {
+	zapLogger.Warn(msg, fields...)
+}
+
+func Error(msg string, fields ...zap.Field) {
+	zapLogger.Error(msg, fields...)
+}
+
+func Fatal(msg string, fields ...zap.Field) {
+	zapLogger.Fatal(msg, fields...)
+}
+
+func Sync() {
+	_ = zapLogger.Sync()
+}
+
+func Delete() {
+	zapLogger = nil
 }
 
 // golactic-union is the golang equivalent of a golang (echo) vs PHP (Symfony)

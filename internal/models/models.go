@@ -1,26 +1,19 @@
 // Copyright (C) 2024 Lukas Rotermund
 // See end of file for extended copyright information.
 
-package main
+package models
 
 import (
-	"log"
-	"net/http"
+	"time"
 
-	"github.com/labstack/echo/v4"
+	"github.com/google/uuid"
 )
 
-func main() {
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		log.Printf("Hallo Brendon")
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-	e.POST("/create-spaceship", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-
-	e.Logger.Fatal(e.Start(":8080"))
+type SpaceShip struct {
+	ID        uuid.UUID `json:"id" db:"id"`
+	Name      string    `json:"name" db:"name"`
+	Intact    bool      `json:"intact" db:"intact"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
 // golactic-union is the golang equivalent of a golang (echo) vs PHP (Symfony)

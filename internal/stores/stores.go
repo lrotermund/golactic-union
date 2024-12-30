@@ -1,26 +1,34 @@
 // Copyright (C) 2024 Lukas Rotermund
 // See end of file for extended copyright information.
 
-package main
+package stores
 
 import (
-	"log"
-	"net/http"
-
-	"github.com/labstack/echo/v4"
+	"database/sql"
 )
 
-func main() {
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		log.Printf("Hallo Brendon")
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-	e.POST("/create-spaceship", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+type Stores struct {
+	DB        *sql.DB
+	SpaceShip SpaceShipStore
+}
 
-	e.Logger.Fatal(e.Start(":8080"))
+func New(db *sql.DB) *Stores {
+	return &Stores{
+		DB:        db,
+		SpaceShip: &spaceShipStore{db},
+	}
+}
+
+func (s *Stores) Begin() (*sql.Tx, error) {
+	return s.DB.Begin()
+}
+
+func (s *Stores) Commit(tx *sql.Tx) error {
+	return tx.Commit()
+}
+
+func (s *Stores) RollBack(tx *sql.Tx) error {
+	return tx.Rollback()
 }
 
 // golactic-union is the golang equivalent of a golang (echo) vs PHP (Symfony)
