@@ -64,7 +64,11 @@ func (s *spaceShipStore) Create(tx *sql.Tx, spaceShip *models.SpaceShip) error {
 }
 
 func (s *spaceShipStore) DeleteByID(id uuid.UUID) error {
-	row, err := s.Exec("DELETE FROM spaceShips WHERE spaceShips.id = $1 RETURNING spaceShips.id", id)
+	row, err := s.Exec(
+		"DELETE FROM spaceShips WHERE spaceShips.id = $1 RETURNING spaceShips.id",
+		id,
+	)
+
 	if err != nil {
 		logger.Error("failed to delete spaceShip by id", zap.Error(err))
 
